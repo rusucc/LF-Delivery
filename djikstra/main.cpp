@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-ifstream fin("graf_simplu.in");
+ifstream fin("graf.in");
 
 bool trav[20]={};
 int cost[20]={};
@@ -22,16 +22,18 @@ int djikstra(char start){
     }
     cost[id_start]=0;
     trav[id_start]=1;
+    parent[id_start]=-1;
     queue<pair<int,int>> p;
     p.push(make_pair(id_start,0));
     while(!p.empty()){
         for(int i=0;i<n;i++){
-            if(A[p.front().first][i]!=255 and trav[i]==0){//este vecin
+            if(A[p.front().first][i]!=255){//este vecin
                 int cost_inst = p.front().second+A[p.front().first][i];
-                if(cost[i]>cost_inst)//daca traseul actual are un costa asociat mai mic decat cel cunoscut, il analizeaza
+                if(cost[i]>cost_inst){//daca traseul actual are un costa asociat mai mic decat cel cunoscut, il analizeaza
                     cost[i]=cost_inst;
-                    //if(trav[i]==0)
-                    p.push(make_pair(i,cost_inst)),parent[i]=p.front().first;
+                    if(trav[i]==0)
+                    parent[i]=p.front().first,p.push(make_pair(i,cost_inst));
+                }
             }
         }
         trav[p.front().first]=1;
@@ -42,7 +44,7 @@ void print_path(char start, char stop){
     int id_start = start-'A';
     int id_stop = stop-'A';
     int curr = id_stop;
-    while(curr!=id_start){
+    while(parent[curr]!=-1){
         cout<<char(curr+'A')<<" ";
         curr = parent[curr];
     }
@@ -62,6 +64,10 @@ int main()
     }
     djikstra('A');
     for(int i=0; i<n; i++){
+        cout<<char('A'+i)<<" ";
+    }
+    cout<<endl;
+    for(int i=0; i<n; i++){
         cout<<cost[i]<<" ";
     }
     cout<<endl;
@@ -69,6 +75,10 @@ int main()
         cout<<parent[i]<<" ";
     }
     cout<<endl;
-    print_path('A','D');
+    for(int i=0; i<n; i++){
+        cout<<char(parent[i]+'A')<<" ";
+    }
+    cout<<endl;
+    print_path('A','I');
     return 0;
 }
